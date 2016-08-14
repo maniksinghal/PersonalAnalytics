@@ -1,8 +1,12 @@
 package com.wordpress.randomexplorations.personalanalytics;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -11,6 +15,38 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    private void check_app_permissions() {
+        /*
+         * With Android 6.0 or later, permissions at install time are not
+         * sufficient any more. Some are needed at runtime as well
+         *
+         * Right now we do not handle user's rejection, assuming user knows
+         * what the APP intends to do.
+         * So if permissions are not available, we just ask for them and continue
+         * without checking user's response.
+         */
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_SMS);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            // Request permission from user
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_SMS},
+                    0);
+        }
+
+
+        permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECEIVE_SMS);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            // Request permission from user
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.RECEIVE_SMS},
+                    0);
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,14 +64,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
+        check_app_permissions();
 
     }
 
     public void onResume() {
         super.onResume();
+
+        TextView tv = (TextView)findViewById(R.id.myTextView);
 
         /*
          * Test code now
@@ -43,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         DatabaseManager dbm = new DatabaseManager(getApplicationContext());
 
         String str = dbm.get_data_table_entry_str(0);
-        TextView tv = (TextView)findViewById(R.id.myTextView);
 
         tv.setText(str);
     }
