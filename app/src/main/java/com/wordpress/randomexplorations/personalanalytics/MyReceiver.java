@@ -9,6 +9,13 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 public class MyReceiver extends BroadcastReceiver {
+
+    /*
+     * MUST MATCH the ACTION specified in MANIFEST
+     */
+    public static final String CUSTOM_ANALYTICS_ACTION =
+            "com.wordpress.randomexplorations.personalanalytics.UPDATE_EVENT";
+
     public MyReceiver() {
     }
 
@@ -19,6 +26,8 @@ public class MyReceiver extends BroadcastReceiver {
         if (action.equals(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {
             // Received an SMS
             handle_sms_actions(context, intent);
+        } else if (CUSTOM_ANALYTICS_ACTION.equals(action)) {
+            handle_custom_actions(context, intent);
         }
     }
 
@@ -68,6 +77,27 @@ public class MyReceiver extends BroadcastReceiver {
         }
 
         return;
+    }
+
+    private void handle_custom_actions(Context ctx, Intent in) {
+
+        Log.d("this", "Received custom intent");
+
+        DataEntryTable tbl = new DataEntryTable();
+        tbl.content = in.getStringExtra(Schema.DataEntry.COLUMN_CONTENT);
+        tbl.owner = in.getStringExtra(Schema.DataEntry.COLUMN_OWNER);
+        tbl.start_time = in.getLongExtra(Schema.DataEntry.COLUMN_START_TIME, 0);
+        tbl.end_time = in.getLongExtra(Schema.DataEntry.COLUMN_END_TIME, 0);
+        tbl.source = in.getStringExtra(Schema.DataEntry.COLUMN_SOURCE);
+        tbl.type = in.getStringExtra(Schema.DataEntry.COLUMN_TYPE);
+        tbl.sub_type = in.getStringExtra(Schema.DataEntry.COLUMN_SUBTYPE);
+        tbl.extra_csv = in.getStringExtra(Schema.DataEntry.COLUMN_EXTRA_CSV);
+        tbl.duration = in.getLongExtra(Schema.DataEntry.COLUMN_DURATION, 0);
+
+        Log.d("this", "Start_time: " + tbl.start_time + ", End_time: " + tbl.end_time);
+
+        DatabaseManager dbm = new DatabaseManager(ctx);
+        dbm.insert_to_data_entry_table(tbl);
     }
 
 }

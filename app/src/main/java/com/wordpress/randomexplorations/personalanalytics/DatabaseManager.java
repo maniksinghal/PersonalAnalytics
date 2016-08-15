@@ -67,6 +67,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
         values.put(Schema.DataEntry.COLUMN_SYNC_SERVER, tbl_entry.sync_server);
         values.put(Schema.DataEntry.COLUMN_SOURCE, tbl_entry.source);
         values.put(Schema.DataEntry.COLUMN_EXTRA_CSV, tbl_entry.extra_csv);
+        values.put(Schema.DataEntry.COLUMN_TYPE, tbl_entry.type);
+        values.put(Schema.DataEntry.COLUMN_SUBTYPE, tbl_entry.sub_type);
 
         Long row = null;
         try {
@@ -83,7 +85,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         Log.d("this", "Inserting row: " + String.valueOf(row));
     }
 
-    public String get_data_table_entry_str(int row_index) {
+    public String get_last_data_table_entry_str() {
         SQLiteDatabase db = this.getReadableDatabase();
 
         /*
@@ -98,12 +100,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 return "Empty Database, Schema not present";
             }
         }
-        c.moveToFirst();
-        c.move(row_index);
 
         if (c.getCount() == 0) {
             return "Empty Database";
         }
+
+        c.moveToFirst();
+        c.move(c.getCount() - 1);  // Point to most recent entry added to database
+
 
         String str = "Owner: ";
         str += c.getString(c.getColumnIndexOrThrow(Schema.DataEntry.COLUMN_OWNER));
@@ -114,11 +118,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
         str += "\nExtra-CSV: ";
         str += c.getString(c.getColumnIndexOrThrow(Schema.DataEntry.COLUMN_EXTRA_CSV));
         str += "\nStart_time: ";
-        str += c.getInt(c.getColumnIndexOrThrow(Schema.DataEntry.COLUMN_START_TIME));
+        str += c.getLong(c.getColumnIndexOrThrow(Schema.DataEntry.COLUMN_START_TIME));
         str += "\nDuration: ";
-        str += c.getInt(c.getColumnIndexOrThrow(Schema.DataEntry.COLUMN_DURATION));
+        str += c.getLong(c.getColumnIndexOrThrow(Schema.DataEntry.COLUMN_DURATION));
         str += "\nEndTime: ";
-        str += c.getInt(c.getColumnIndexOrThrow(Schema.DataEntry.COLUMN_END_TIME));
+        str += c.getLong(c.getColumnIndexOrThrow(Schema.DataEntry.COLUMN_END_TIME));
 
         c.close();
 

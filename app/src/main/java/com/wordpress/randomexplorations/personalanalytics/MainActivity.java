@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
          */
         DatabaseManager dbm = new DatabaseManager(getApplicationContext());
 
-        String str = dbm.get_data_table_entry_str(0);
+        String str = dbm.get_last_data_table_entry_str();
 
         tv.setText(str);
     }

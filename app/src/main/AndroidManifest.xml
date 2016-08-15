@@ -30,6 +30,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+                <action android:name="com.wordpress.randomexplorations.personalanalytics.UPDATE_EVENT" />
             </intent-filter>
         </receiver>
     </application>
