@@ -2,8 +2,10 @@ package com.wordpress.randomexplorations.personalanalytics;
 
 import android.provider.BaseColumns;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -78,6 +80,32 @@ public final class Schema {
         public static long get_current_time() {
             Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
             return cal.getTimeInMillis() / 1000;
+        }
+
+        public static List<String> get_fields() {
+            List<String> arr = new ArrayList<String>();
+            arr.add(COLUMN_SOURCE);
+            arr.add(COLUMN_TYPE);
+            arr.add(COLUMN_SUBTYPE);
+            arr.add(COLUMN_OWNER);
+            arr.add(COLUMN_CONTENT);
+            arr.add(COLUMN_START_TIME);
+            arr.add(COLUMN_END_TIME);
+            arr.add(COLUMN_DURATION);
+            arr.add(COLUMN_SYNC_SERVER);
+            arr.add(COLUMN_SYNC_TIME);
+            arr.add(COLUMN_FLAGS);
+            arr.add(COLUMN_EXTRA_CSV);
+            return arr;
+        }
+
+        public static boolean is_column_long(String col) {
+            if (col.equals(COLUMN_START_TIME) || col.equals(COLUMN_END_TIME) ||
+                    col.equals(COLUMN_DURATION) || col.equals(COLUMN_SYNC_TIME)) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
     }

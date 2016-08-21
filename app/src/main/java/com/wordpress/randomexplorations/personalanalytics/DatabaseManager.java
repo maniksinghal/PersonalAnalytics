@@ -34,9 +34,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
          * Try fetching 1 row from the table and handle exception in case the table
          * does not exist
          */
-        Cursor c = null;
         try {
-            c = db.query(Schema.TABLE_MAIN_DATA, null, null, null, null, null, null, "1");
+            db.query(Schema.TABLE_MAIN_DATA, null, null, null, null, null, null, "1");
         } catch (SQLiteException e) {
             Log.d("this", "Exception during get_data_table_entry_str,  is: " + e.getMessage());
             if (e.getMessage().contains("no such table")) {
@@ -70,7 +69,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         values.put(Schema.DataEntry.COLUMN_TYPE, tbl_entry.type);
         values.put(Schema.DataEntry.COLUMN_SUBTYPE, tbl_entry.sub_type);
 
-        Long row = null;
+        Long row;
         try {
             row = db.insert(Schema.TABLE_MAIN_DATA, null, values);
         } catch (SQLiteException e) {
@@ -106,9 +105,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
 
         c.moveToFirst();
-        c.move(c.getCount() - 1);  // Point to most recent entry added to database
+        if (c.getCount() > 5) {
+            // Display only last 5 entries
+            c.move(c.getCount() - 4);
+        }
 
+        String str = Dom.create_XML_string_from_cursor(c);
 
+/*
         String str = "Owner: ";
         str += c.getString(c.getColumnIndexOrThrow(Schema.DataEntry.COLUMN_OWNER));
         str += "\nSource: ";
@@ -123,6 +127,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         str += c.getLong(c.getColumnIndexOrThrow(Schema.DataEntry.COLUMN_DURATION));
         str += "\nEndTime: ";
         str += c.getLong(c.getColumnIndexOrThrow(Schema.DataEntry.COLUMN_END_TIME));
+*/
 
         c.close();
 
